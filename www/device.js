@@ -43,6 +43,7 @@ function Device() {
     this.model = null;
     this.manufacturer = null;
     this.isVirtual = null;
+    this.name = null;
     this.serial = null;
 
     var me = this;
@@ -59,8 +60,9 @@ function Device() {
             me.cordova = buildLabel;
             me.model = info.model;
             me.isVirtual = info.isVirtual;
+            me.name = info.name || 'unknown';                    // silversearch: not implemented for android yet
             me.manufacturer = info.manufacturer || 'unknown';
-            me.serial = info.serial || 'unknown';
+            me.serial = info.serial || info.name || 'unknown';   // silversearch: serial is stored in device name for our purposes
             channel.onCordovaInfoReady.fire();
         },function(e) {
             me.available = false;

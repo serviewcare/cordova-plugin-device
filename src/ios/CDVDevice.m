@@ -89,7 +89,8 @@
              @"version": [device systemVersion],
              @"uuid": [self uniqueAppInstanceIdentifier:device],
              @"cordova": [[self class] cordovaVersion],
-             @"isVirtual": @([self isVirtual])
+             @"isVirtual": @([self isVirtual]),
+             @"name": [device name]
              };
 }
 
