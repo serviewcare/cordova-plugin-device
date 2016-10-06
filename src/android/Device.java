@@ -73,6 +73,8 @@ public class Device extends CordovaPlugin {
             r.put("version", this.getOSVersion());
             r.put("platform", this.getPlatform());
             r.put("model", this.getModel());
+            r.put("productName", this.getProductName());
+            r.put("name", this.getDeviceName());
             r.put("manufacturer", this.getManufacturer());
 	        r.put("isVirtual", this.isVirtual());
             r.put("serial", this.getSerialNumber());
@@ -118,6 +120,13 @@ public class Device extends CordovaPlugin {
         return model;
     }
 
+    // only way to get user-defined device name is through the bluetooth adapter
+    public String getDeviceName() {
+        BluetoothAdapter myDevice = BluetoothAdapter.getDefaultAdapter();
+        String deviceName = myDevice.getName();
+        return deviceName;
+    }
+
     public String getProductName() {
         String productname = android.os.Build.PRODUCT;
         return productname;
@@ -125,11 +134,32 @@ public class Device extends CordovaPlugin {
 
     public String getManufacturer() {
         String manufacturer = android.os.Build.MANUFACTURER;
-        return manufacturer;
+        return manufacturer.toLowerCase();
     }
 
+    // There's no requirement for manufacturers to provide a method to get the serial number,
+    // so it may be locked down depending on manufacturer. 
+    // http://stackoverflow.com/questions/14161282/serial-number-from-samsung-device-running-android
     public String getSerialNumber() {
-        String serial = android.os.Build.SERIAL;
+        String serial;
+
+        // get the System Properties
+        Class<?> c = Class.forName("android.os.SystemProperties");
+        Method get = c.getMethod("get", String.class, String.class);
+
+        // get the serial from system properties
+        serial = (String) get.invoke(c, "sys.serialnumber", "Error");
+
+        // if couldn't get it from sys.serialnumber
+        if(serialNumber.equals("Error")) {
+            serial = (String) get.invoke(c, "ril.serialnumber", "Error");
+        }
+
+        // if couldn't get it from radio interface, final fallback (unreliable)
+        if(serialNumber.equals("Error")) {
+            serial = android.os.Build.SERIAL;
+        }
+
         return serial;
     }
 
