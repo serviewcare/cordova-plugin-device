@@ -146,12 +146,12 @@ public class Device extends CordovaPlugin {
 
         try {
             serial = android.os.SystemProperties.get("sys.serialnumber");
-        } catch(error) {}
+        } catch(IllegalAccessException ex) {}
         
         if(serial == null || "".equals(serial)) {
             try {
                 serial = android.os.SystemProperties.get("ril.serialnumber");
-            } catch(error) {}
+            } catch(IllegalAccessException ex) {}
         }
 
         if(serial == null || "".equals(serial)) {
