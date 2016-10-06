@@ -150,8 +150,8 @@ public class Device extends CordovaPlugin {
             Class<?> c = Class.forName("android.os.SystemProperties");
             Method get = c.getMethod("get", String.class, String.class);
             serial = (String) get.invoke(c, "sys.serialnumber", "Error");
-            if(serialNumber.equals("Error")) {
-                serialNumber = (String) get.invoke(c, "ril.serialnumber", "Error");
+            if(serial.equals("Error")) {
+                serial = (String) get.invoke(c, "ril.serialnumber", "Error");
             }
         } catch (Exception ignored) {
             serial = new String("unknown");
