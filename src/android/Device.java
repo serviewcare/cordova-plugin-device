@@ -19,6 +19,8 @@
 package org.apache.cordova.device;
 
 import java.util.TimeZone;
+import java.lang.reflect.Method;
+import java.lang.Class<T>;
 
 import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.CallbackContext;
@@ -142,19 +144,21 @@ public class Device extends CordovaPlugin {
     // so it may be locked down depending on manufacturer. 
     // http://stackoverflow.com/questions/14161282/serial-number-from-samsung-device-running-android
     public String getSerialNumber() {
-        String serial;
+        String serial = new String("unknown");
 
         try {
-            serial = android.os.SystemProperties.get("sys.serialnumber");
-        } catch(IllegalAccessException ex) {}
-        
-        if(serial == null || "".equals(serial)) {
-            try {
-                serial = android.os.SystemProperties.get("ril.serialnumber");
-            } catch(IllegalAccessException ex) {}
+            Class<?> c = Class.forName("android.os.SystemProperties");
+            Method get = c.getMethod("get", String.class, String.class);
+            serial = (String) get.invoke(c, "sys.serialnumber", "Error");
+            if(serialNumber.equals("Error")) {
+                serialNumber = (String) get.invoke(c, "ril.serialnumber", "Error");
+            }
+        } catch (Exception ignored) {
+            serial = new String("unknown");
         }
 
-        if(serial == null || "".equals(serial)) {
+
+        if(serial == null || "".equals(serial) || "unknown".equals(serial)) {
             serial = android.os.Build.SERIAL;
         }
 
