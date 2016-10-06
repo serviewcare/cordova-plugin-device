@@ -19,6 +19,7 @@
 package org.apache.cordova.device;
 
 import java.util.TimeZone;
+import java.lang.reflect.Method;
 
 import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.CallbackContext;
@@ -29,6 +30,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.provider.Settings;
+import android.bluetooth;
 
 public class Device extends CordovaPlugin {
     public static final String TAG = "Device";
