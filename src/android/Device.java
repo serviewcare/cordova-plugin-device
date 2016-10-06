@@ -150,13 +150,13 @@ public class Device extends CordovaPlugin {
         // get the serial from system properties
         serial = (String) get.invoke(c, "sys.serialnumber", "Error");
 
-        // if couldn't get it from sys.serialnumber
-        if(serialNumber.equals("Error")) {
+        // if couldn't get it from sys.serialnumber, use radio interface layer
+        if(serial.equals("Error")) {
             serial = (String) get.invoke(c, "ril.serialnumber", "Error");
         }
 
         // if couldn't get it from radio interface, final fallback (unreliable)
-        if(serialNumber.equals("Error")) {
+        if(serial.equals("Error")) {
             serial = android.os.Build.SERIAL;
         }
 
