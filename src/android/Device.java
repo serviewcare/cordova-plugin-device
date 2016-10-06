@@ -19,8 +19,6 @@
 package org.apache.cordova.device;
 
 import java.util.TimeZone;
-import java.lang.reflect.Method;
-import java.lang.Class<T>;
 
 import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.CallbackContext;
@@ -146,20 +144,17 @@ public class Device extends CordovaPlugin {
     public String getSerialNumber() {
         String serial;
 
-        // get the System Properties
-        Class<?> c = Class.forName("android.os.SystemProperties");
-        Method get = c.getMethod("get", String.class, String.class);
-
-        // get the serial from system properties
-        serial = (String) get.invoke(c, "sys.serialnumber", "Error");
-
-        // if couldn't get it from sys.serialnumber, use radio interface layer
-        if(serial.equals("Error")) {
-            serial = (String) get.invoke(c, "ril.serialnumber", "Error");
+        try {
+            serial = android.os.SystemProperties.get("sys.serialnumber");
+        } catch(error) {}
+        
+        if(serial == null || "".equals(serial)) {
+            try {
+                serial = android.os.SystemProperties.get("ril.serialnumber");
+            } catch(error) {}
         }
 
-        // if couldn't get it from radio interface, final fallback (unreliable)
-        if(serial.equals("Error")) {
+        if(serial == null || "".equals(serial)) {
             serial = android.os.Build.SERIAL;
         }
 
